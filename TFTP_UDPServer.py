@@ -122,7 +122,7 @@ def handler(sock,msg,peer):
         operation = struct.unpack('!H', msg[0:2])[0]
         sizepath = len(msg) - 14
         filename = struct.unpack('!' + str(sizepath) + 's', msg[2:sizepath + 2])[0]
-        path = '/home/pillete/Desktop/Servidor/' + filename.decode()
+        path = './' + filename.decode()
         if operation == 1:
             if os.path.isfile(path):
                 print("Operation 1")
