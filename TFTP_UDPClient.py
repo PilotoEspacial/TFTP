@@ -112,7 +112,7 @@ def write(fileName):
 initialization_handler()
 server = (argv[2], int(argv[4]))
 sock = socket(AF_INET, SOCK_DGRAM)
-sec = 10  # Timeout of four seconds
+sec = 9  # Timeout of four seconds
 usec = 10000
 timevalue = struct.pack('ll', sec, usec)
 sock.setsockopt(SOL_SOCKET, SO_RCVTIMEO, timevalue)
