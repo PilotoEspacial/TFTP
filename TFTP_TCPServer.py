@@ -100,7 +100,7 @@ def handle(sock, client, n):
         print(op)
         if op == 1:
             filename = struct.unpack('!' + str(sizefile) + 's', msg[2:sizefile + 2])[0]
-            path = '/home/pillete/Desktop/Servidor/' + filename.decode()
+            path = './' + filename.decode()
             if os.path.isfile(path):
                 print('The client is reading')
                 sendData(path, sock)
@@ -108,7 +108,7 @@ def handle(sock, client, n):
                 sendError(1, client,sock)
         if op == 2:
             filename = struct.unpack('!' + str(sizefile) + 's', msg[2:sizefile + 2])[0]
-            path = '/home/pillete/Desktop/Servidor/' + filename.decode()
+            path = './' + filename.decode()
             if not os.path.isfile(path):
                 print('The client is writing')
                 sizefile = len(msg) - 14
