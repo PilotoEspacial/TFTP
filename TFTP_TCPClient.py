@@ -29,7 +29,7 @@ def sendACK(response, sock):
     sock.send(msgtosend)
 
 def read(FileName, mode):
-    path = '/home/pillete/Desktop/Cliente/' + FileName
+    path = './' + FileName
     f = open(path, 'wb')
     while 1:
             response = sock.recv(518)
@@ -56,7 +56,7 @@ def read(FileName, mode):
 
 
 def write(FileName, mode):
-    path = '/home/pillete/Desktop/Cliente/' + FileName
+    path = './' + FileName
     f = open(path, 'rb')
     sizeFile = os.path.getsize(path)
     num_packs = math.ceil(sizeFile / 512)
@@ -112,7 +112,7 @@ def main():
         else:
             if op[0].lower() == 'read':
                 FileName = op[1]
-                path='/home/pillete/Desktop/Cliente/' + FileName
+                path='./' + FileName
                 if not os.path.isfile(path):
                     msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 1, FileName.encode(), 0, mode, 0)
                     sock.send(msg)
