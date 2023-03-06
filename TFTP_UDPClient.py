@@ -70,7 +70,7 @@ def write(fileName):
     msg = sock.recvfrom(518)[0]
     op = struct.unpack('!H', msg[0:2])[0]
     if op!=5:
-        path = '/home/pillete/Desktop/Cliente/' + fileName
+        path = './' + fileName
         sizeFile = os.path.getsize(path)
         if (sizeFile < 512):
             num_packs = 1
