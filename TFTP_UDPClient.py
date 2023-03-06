@@ -23,7 +23,7 @@ def initialization_handler():
 
 
 def read(fileName):
-    path = '/home/pillete/Desktop/Cliente/' + fileName
+    path = './' + fileName
     f = open(path, 'wb')
     while 1:
         try:
@@ -127,7 +127,7 @@ def main():
             print("Incorrect format")
         else:
             FileName = op[1]
-            path = '/home/pillete/Desktop/Cliente/' + FileName
+            path = './' + FileName
             if op[0].lower() == 'read':
                 if not os.path.isfile(path):
                     msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 1, FileName.encode(), 0, mode, 0)
