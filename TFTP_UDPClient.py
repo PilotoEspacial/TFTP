@@ -22,8 +22,8 @@ def initialization_handler():
         exit(1)
 
 
-def read(fileName):
-    path = './' + fileName
+def read(filename):
+    path = './' + filename
     f = open(path, 'wb')
     while 1:
         try:
@@ -66,11 +66,11 @@ def controlACK(ack, path, peer):
     sock.sendto(data,peer)
     a.close()
 
-def write(fileName):
+def write(filename):
     msg = sock.recvfrom(518)[0]
     op = struct.unpack('!H', msg[0:2])[0]
     if op!=5:
-        path = './' + fileName
+        path = './' + filename
         sizeFile = os.path.getsize(path)
         if (sizeFile < 512):
             num_packs = 1
@@ -112,7 +112,7 @@ def write(fileName):
 initialization_handler()
 server = (argv[2], int(argv[4]))
 sock = socket(AF_INET, SOCK_DGRAM)
-sec = 9  # Timeout of four seconds
+sec =  10 # Timeout of four seconds
 usec = 10000
 timevalue = struct.pack('ll', sec, usec)
 sock.setsockopt(SOL_SOCKET, SO_RCVTIMEO, timevalue)
@@ -126,24 +126,24 @@ def main():
         if len(op) != 2 :
             print("Incorrect format")
         else:
-            FileName = op[1]
-            path = './' + FileName
+            filename = op[1]
+            path = './' + filename
             if op[0].lower() == 'read':
                 if not os.path.isfile(path):
-                    msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 1, FileName.encode(), 0, mode, 0)
+                    msg = struct.pack('!H' + str(len(filename)) + 'sh' + str(len(mode)) + 'sh', 1, filename.encode(), 0, mode, 0)
                     sock.sendto(msg, server)
                     tw1 = time.time()
-                    read(FileName)
+                    read(filename)
                     tw2 = time.time()
                     print("Total time: "+str((tw2 - tw1) * 1000))
                 else:
                      print("The file already exists.")
             elif op[0].lower() == 'write':
                 if os.path.isfile(path):
-                    msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 2, FileName.encode(), 0, mode, 0)
+                    msg = struct.pack('!H' + str(len(filename)) + 'sh' + str(len(mode)) + 'sh', 2, filename.encode(), 0, mode, 0)
                     sock.sendto(msg, server)
                     tr1 = time.time()
-                    write(FileName)
+                    write(filename)
                     tr2 = time.time()
                     print("Total time: " +str((tr2 - tr1) * 1000))
                 else:

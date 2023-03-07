@@ -28,8 +28,8 @@ def sendACK(response, sock):
     msgtosend = struct.pack('!2H', 4, ack)
     sock.send(msgtosend)
 
-def read(FileName, mode):
-    path = './' + FileName
+def read(filename, mode):
+    path = './' + filename
     f = open(path, 'wb')
     while 1:
             response = sock.recv(518)
@@ -55,37 +55,35 @@ def read(FileName, mode):
     f.close()
 
 
-def write(FileName, mode):
-    path = './' + FileName
+def write(filename, mode):
+    path = './' + filename
     f = open(path, 'rb')
     sizeFile = os.path.getsize(path)
     num_packs = math.ceil(sizeFile / 512)
     f = open(path, 'rb')
     response = f.read(512)
     data = struct.pack('!HH' + str(len(response)) + 's', 3, 1, response)
-    print('Sending msg')
+    print('Sending msg...')
     while num_packs:
         try:
             sock.send(data)
             num_packs -= 1
             msg = sock.recv(518)
             op = struct.unpack('!H', msg[0:2])[0]
-            if op==5:
+            if op == 5:
                 Error = struct.unpack('!' + str(len(msg[4:len(msg)])) + 's', msg[4:len(msg)])[0]
                 print(Error.decode())
                 break
-        except error:
-            print('The server closed the conexion')
-            exit(1)
-        else:
             if op == 4:
                 data = f.read(512)
                 pack = struct.unpack('!H', msg[2:4])[0] + 1
                 data = struct.pack('!HH' + str(len(data)) + 's', 3, pack, data)
                 if num_packs == 0:
                     break
-
-
+        except error:
+            print('The server closed the conexion')
+            exit(1)
+            
     f.close()
 
 
@@ -98,6 +96,7 @@ usec = 10000
 timevalue = struct.pack('ll', sec, usec)
 sock.setsockopt(SOL_SOCKET, SO_RCVTIMEO, timevalue)
 mode = b'NETASCII'
+
 def main():
     while 1:
         instruction = input('TFTP@TCP> ')
@@ -111,26 +110,26 @@ def main():
             print("Incorrect format")
         else:
             if op[0].lower() == 'read':
-                FileName = op[1]
-                path='./' + FileName
+                filename = op[1]
+                path='./' + filename
                 if not os.path.isfile(path):
-                    msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 1, FileName.encode(), 0, mode, 0)
+                    msg = struct.pack('!H' + str(len(filename)) + 'sh' + str(len(mode)) + 'sh', 1, filename.encode(), 0, mode, 0)
                     sock.send(msg)
                     tw1 = time.time()
-                    read(FileName, mode)
+                    read(filename, mode)
                     tw2 = time.time()
                     print("Total time: " + str((tw2 - tw1) * 1000))
                 else:
                     print("The file already exists.")
             elif op[0].lower() == 'write':
-                FileName = op[1]
-                path = '/home/pillete/Desktop/Cliente/' + FileName
+                filename = op[1]
+                path = './' + filename
                 if os.path.isfile(path):
-                    FileName = op[1]
-                    msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 2, FileName.encode(), 0, mode, 0)
+                    filename = op[1]
+                    msg = struct.pack('!H' + str(len(filename)) + 'sh' + str(len(mode)) + 'sh', 2, filename.encode(), 0, mode, 0)
                     sock.send(msg)
                     tw1 = time.time()
-                    write(FileName, mode)
+                    write(filename, mode)
                     tw2 = time.time()
                     print("Total time: " + str((tw2 - tw1) * 1000))
                 else:
@@ -142,9 +141,9 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        op=6
+        op = 6
         print('Interrupted.')
-        msg = struct.pack('!H' + str(len(op)) + 'sh' + str(len(mode)) + 'sh', 6, op.encode(), 0, mode, 0)
+        msg = struct.pack('!H' + str(4) + 'sh' + str(len(mode)) + 'sh', 6, str(op).encode(), 0, mode, 0)
         sock.send(msg)
         sock.close()
         exit(0)

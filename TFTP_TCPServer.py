@@ -115,7 +115,7 @@ def handle(sock, client, n):
                 receiveData(path, sock)
             else:
                 sendError(6, client,sock)
-        elif op== 6:
+        elif op == 6:
             print('The client has'+str(client)+ 'disconected')
             exit(0)
 
@@ -133,3 +133,6 @@ while 1:
     child_sock, client = sock.accept()
     n += 1
     _thread.start_new_thread(handle, (child_sock, client, n))
+    if n == 0:
+        print("No more clients availables\n")
+        exit(0)

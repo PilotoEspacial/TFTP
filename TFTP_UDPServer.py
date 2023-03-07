@@ -18,7 +18,9 @@ ServerError = {
     6: 'File already exists.',
     7: 'No such user.',
 }
-path='/home/pillete/Desktop/Servidor/'
+
+
+mode = b'NETASCII'
 
 def initialization_handler():
     if len(argv) != 3:
@@ -34,17 +36,24 @@ def sendError(ErrorCode, peer,sock):
     data = struct.pack('!HH' + str(len(ServerError[ErrorCode])) + 'sH', 5, ErrorCode, ServerError[ErrorCode].encode(), 0)
     sock.sendto(data, peer)
 
-def receiveData(sock,path,peer):
+def receiveData(sock, path, peer):
     f = open(path, 'wb')
     ack_msg = struct.pack('!HH', 4, 0)
     sock.sendto(ack_msg, peer)
+    
     while 1:
         try:
             response = sock.recvfrom(518)[0]
-        except error:
-            msg = struct.pack('!H' + str(len(FileName)) + 'sh' + str(len(mode)) + 'sh', 1, FileName.encode(), 0, mode,0)
-            sock.sendto(msg, server)
-            read(FileName, mode)
+
+        except BlockingIOError:
+           print('The message has arrived')
+           break
+           msg = struct.pack('!H' + str(len(filename)) + 'sh' + str(len(mode)) + 'sh', 1, filename.encode(), 0, mode,0)
+           sock.sendto(msg, server)
+           read(filename, mode)
+           
+
+           
         else:
             op = struct.unpack('!H', response[0:2])[0]
             if op == 3:
@@ -136,13 +145,14 @@ def handler(sock,msg,peer):
             if not os.path.isfile(path):
                 print("Operation 2")
                 print(str(peer[0]) + ' wants to write')
-                receiveData(sock,path, peer)
+                receiveData(sock, path, peer)
                 break
             else:
                 sendError(6, peer,sock)
                 break
 
 def main():
+    
     sock = socket(AF_INET, SOCK_DGRAM)
     sock.bind(('', int(argv[2])))
     sec = 10  # Timeout of four seconds
