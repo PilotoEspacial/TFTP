@@ -170,7 +170,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        initialization_handler
+        initialization_handler()
         main()
     except KeyboardInterrupt:
         print('Interrupted.')
